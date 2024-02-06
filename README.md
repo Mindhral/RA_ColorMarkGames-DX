@@ -15,6 +15,32 @@ The script is fixed for RAWeb 6.0.3 (at least), and adds some features:
 - On pages with progress bars, use data from these instead instead of the one stored from profile page
 - and a few minor tweaks (script favicon, adds total unlocks in game list foot row...)
 
+## Examples
+
+*Similar Games* section on a game's page:
+
+![Example - similar games](/assets/Example_game.png)
+
+Hub page:
+
+![Example - hub](/assets/Example_hub.png)
+
+Developer's sets list:
+
+![Example - dev sets](/assets/Example_dev_sets.png)
+
+*Want to Play* list:
+
+![Example - want to play](/assets/Example_wanttoplay.png)
+
+Other user's *Completion Progress* page:
+
+![Example - completion progress](/assets/Example_progress.png)
+
+Forum post:
+
+![Example - forum post](/assets/Example_forum.png)
+
 ## Settings
 
 Settings can be changed on the user settings page, and are saved in the script extension's (Tampermonkey for example) storage. They are not synchronized between browsers or devices, but should be kept even if the website cache and storage are wiped.
@@ -22,6 +48,8 @@ Settings can be changed on the user settings page, and are saved in the script e
 ![Settings default](/assets/Settings_default.png)
 
 ### Text colors
+
+![Settings colors](/assets/Settings_colors.png)
 
 Select a category in the drop down list on the left, then either use the color picker (browser dependent) or check "site default" to use the default color for links from your selected theme (orange for default theme).
 
@@ -53,7 +81,7 @@ The reset icon on the right allows to restore the default order.
 
 - *Show progress for 100% unlocks*: on tables with a number of achievements but no progress bar (*All Games* and *Want to Play* as of today), the number of achievements is replaced by a progression of type unlocked/total. This parameter disables this behavior for games with all achievements unlocked.
   Here it is disabled:
-  [No progress for 100% unlock](/assets/Settings_100_noprogress.png)
+  ![No progress for 100% unlock](/assets/Settings_100_noprogress.png)
   
 - *Use hardcore progress*: allows to use hardcore progress only to determine which games are started, half done and mastered. This is only meaningful for "mixed" players (using both modes).
 
