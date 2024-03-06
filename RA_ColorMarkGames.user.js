@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        RA_ColorMarkGames
 // @description Colors Game Names
-// @version     1.0
+// @version     1.1
 // @namespace   RA
 // @match       https://retroachievements.org/game/*
 // @match       https://retroachievements.org/gameSearch*
@@ -42,7 +42,9 @@ const Settings = {
     UseHardcoreProgression: GM_getValue('useHardcoreProgression', false),
     ColorHubLines: GM_getValue('colorHubLines', true),
     SortHubLines: GM_getValue('sortHubLines', true),
-    ColorProgressLines: GM_getValue('colorProgressLines', true)
+    ColorProgressLines: GM_getValue('colorProgressLines', true),
+    ColorSetRequestLines: GM_getValue('colorSetRequestLines', true),
+    SortSetRequestLines: GM_getValue('sortSetRequestLines', true)
 };
 
 // TODO: Ignored from the site interface
@@ -255,14 +257,11 @@ const Pages = (() => {
         .filter(v => v)
         .reduce((p, c) => ({ ...p, ...c }), {});
 
-        const GetProgressCellText = id => {
-            const progressObj = Data.ProgressGet()[id];
-            return (progressObj && (Settings.ShowProgressFor100PercentUnlocks || progressObj.Unlocked !== progressObj.Total))
-                ? `${progressObj.Unlocked} / ${progressObj.Total}` : null;
-        };
         const AddProgress = (rowObj, i) => {
             const cells = rowObj.Row.getElementsByTagName('td');
-            const progressTextText = GetProgressCellText(rowObj.Id);
+            const progressObj = Data.ProgressGet()[rowObj.Id];
+            const progressTextText = (progressObj && (Settings.ShowProgressFor100PercentUnlocks || progressObj.Unlocked !== progressObj.Total))
+            ? `${progressObj.Unlocked} / ${progressObj.Total}` : null;
             if (progressTextText) cells[i].innerHTML = progressTextText;
             cells[i].style = 'text-align: right; padding-right: 2em;';
         };
@@ -372,6 +371,39 @@ const Pages = (() => {
         return { Hardest, Do };
     })();
 
+    const SetRequests = (() => {
+
+        const splitDefault = (rowsObjsByType) => rowsObjsByType.Default?.reduceRight((p, c, i) => {
+            const text = c.Row.getElementsByTagName('td')[1].innerText;
+            if (c.Row.getElementsByTagName('td')[1].innerText.trim() === 'Set Exists') return p;
+            p.Default.splice(i, 1);
+            return { ...p, NoSet: [c, ...(p.NoSet || [])] };
+        }, rowsObjsByType) || rowsObjsByType;
+
+        const Do = () => {
+            if (new URLSearchParams(window.location.search).get('f') !== '1') return;
+            const table = document.querySelector('article table.table-highlight');
+            const rowsObjs = GetRowsData(table).sort((a, b) => a.Name.localeCompare(b.Name));
+            const rowsObjsByType = splitDefault(Processing.GroupByTypes(rowsObjs));
+            SetNewOrder(table, rowsObjsByType, Settings.ColorSetRequestLines, Settings.SortSetRequestLines);
+            if (rowsObjsByType.NoSet) {
+                const titleCell = document.createElement('th');
+                titleCell.innerHTML = 'Progress';
+                table.querySelector('tr.do-not-highlight')?.append(titleCell);
+                rowsObjs.forEach(rowObj => {
+                    const newCell = document.createElement('td');
+                    rowObj.Row.append(newCell);
+                    const progressObj = Data.ProgressGet()[rowObj.Id];
+                    const progressTextText = (progressObj && (Settings.ShowProgressFor100PercentUnlocks || progressObj.Unlocked !== progressObj.Total))
+                    ? `${progressObj.Unlocked} / ${progressObj.Total}` : null;
+                    if (progressTextText) newCell.innerHTML = progressTextText;
+                });
+            }
+        };
+
+        return { Do };
+    })();
+
     const Forum = (() => {
         const GetLinks = () => [...document
                                 .getElementsByTagName("article")[0]
@@ -461,6 +493,13 @@ const Pages = (() => {
 				<td>Completion progress <div class="icon" title="Other users completion progress pages" style="cursor: help;">💡</div></td>
 				<td style="text-align: right;">
 					<label><input id="colorProgressCheckbox" type="checkbox"/> color</label>
+				</td>
+			</tr>
+			<tr>
+				<td>User set requests</td>
+				<td style="text-align: right;">
+					<label><input id="colorSetRequestsCheckbox" type="checkbox"/> color</label>
+                    <label><input id="sortSetRequestsCheckbox" type="checkbox"/> sort</label>
 				</td>
 			</tr>
 		</tbody>
@@ -562,33 +601,21 @@ const Pages = (() => {
                 GM_setValue('smallSetThr', smallSetThrInput.value);
             });
 
-            const show100ProgressInput = document.getElementById('show100ProgressCheckbox');
-            show100ProgressInput.checked = Settings.ShowProgressFor100PercentUnlocks;
-            show100ProgressInput.addEventListener('input', () => {
-                GM_setValue('showProgressFor100PercentUnlocks', show100ProgressInput.checked);
-            });
+            const bindCheckbox = (checkboxId, settingKey, storageKey) => {
+                const checkbox = document.getElementById(checkboxId);
+                checkbox.checked = Settings[settingKey];
+                checkbox.addEventListener('input', () => {
+                    GM_setValue(storageKey, checkbox.checked);
+                });
+            };
 
-            const useHardcoreInput = document.getElementById('useHardcoreCheckbox');
-            useHardcoreInput.checked = Settings.UseHardcoreProgression;
-            useHardcoreInput.addEventListener('input', () => {
-                GM_setValue('useHardcoreProgression', useHardcoreInput.checked);
-            });
-
-            const colorHubsInput = document.getElementById('colorHubsCheckbox');
-            colorHubsInput.checked = Settings.ColorHubLines;
-            colorHubsInput.addEventListener('input', () => {
-                GM_setValue('colorHubLines', colorHubsInput.checked);
-            });
-            const sortHubsInput = document.getElementById('sortHubsCheckbox');
-            sortHubsInput.checked = Settings.SortHubLines;
-            sortHubsInput.addEventListener('input', () => {
-                GM_setValue('sortHubLines', sortHubsInput.checked);
-            });
-            const colorProgressInput = document.getElementById('colorProgressCheckbox');
-            colorProgressInput.checked = Settings.ColorProgressLines;
-            colorProgressInput.addEventListener('input', () => {
-                GM_setValue('colorProgressLines', colorProgressInput.checked);
-            });
+            bindCheckbox('show100ProgressCheckbox', 'ShowProgressFor100PercentUnlocks', 'showProgressFor100PercentUnlocks');
+            bindCheckbox('useHardcoreCheckbox', 'UseHardcoreProgression', 'useHardcoreProgression');
+            bindCheckbox('colorHubsCheckbox', 'ColorHubLines', 'colorHubLines');
+            bindCheckbox('sortHubsCheckbox', 'SortHubLines', 'sortHubLines');
+            bindCheckbox('colorProgressCheckbox', 'ColorProgressLines', 'colorProgressLines');
+            bindCheckbox('colorSetRequestsCheckbox', 'ColorSetRequestLines', 'colorSetRequestLines');
+            bindCheckbox('sortSetRequestsCheckbox', 'SortSetRequestLines', 'sortSetRequestLines');
         };
 
         return { Do };
@@ -600,6 +627,7 @@ const Pages = (() => {
         system: Hub.Do,
         developer: Hub.Do,
         gameList: GameList.Do,
+        setRequestList: SetRequests.Do,
         progress: Progress.Do,
         viewtopic: Forum.Do,
         controlpanel: SettingsPage.Do

@@ -12,6 +12,7 @@ The script is fixed for RAWeb 6.0.3 (at least), and adds some features:
 - Support for developer sets list
 - Settings to disable coloring or sorting on pages with progress bars
 - Support for other users progress page (and setting to disable it)
+- Support for *Requested Sets* page for a user when the link to include games with a set has been used
 - On pages with progress bars, use data from these instead instead of the one stored from profile page
 - and a few minor tweaks (script favicon, adds total unlocks in game list foot row...)
 
@@ -88,3 +89,5 @@ The reset icon on the right allows to restore the default order.
 - *Game lists with progress bars*: allows to disable coloring on Hubs, console games lists and developer sets lists as the new display for these pages can be considered clear enough. The sorting can also be disabled as it messes with the one provided by these pages, unless using [RA_EnhancedHubSort](https://github.com/Mindhral/RA_userscripts/tree/main#ra_enhancedhubsort) at the same time
 
 - *Completion progress*: allows to disable the coloring on other users completion progress pages.
+
+- *User set requests*: allows to disable the coloring and the sorting on the *Requested Sets* list of a user.
