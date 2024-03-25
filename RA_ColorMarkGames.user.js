@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        RA_ColorMarkGames
 // @description Colors Game Names
-// @version     1.1
+// @version     1.1.1
 // @namespace   RA
 // @match       https://retroachievements.org/game/*
 // @match       https://retroachievements.org/gameSearch*
@@ -143,7 +143,7 @@ const Pages = (() => {
             if (!progressTitle) return res;
             const hcProgressMatch = progressTitle.match(/(\d+)\/(\d+) \(hardcore\)/);
             const hcUnlocked = hcProgressMatch ? parseInt(hcProgressMatch[1]) : 0;
-            const scProgressMatch = progressTitle.match(/(\d+)\/(\d+) \(softcore\)/);
+            const scProgressMatch = progressTitle.match(/(\d+)\/(\d+) \(softcore(?: only)?\)/);
             const scUnlocked = scProgressMatch ? parseInt(scProgressMatch[1]) : hcUnlocked;
             const Total = parseInt(hcProgressMatch ? hcProgressMatch[2] : scProgressMatch[2]);
             const Unlocked = Settings.UseHardcoreProgression ? hcUnlocked : scUnlocked;
