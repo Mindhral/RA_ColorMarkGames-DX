@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        RA_ColorMarkGames
 // @description Colors Game Names
-// @version     1.1.1
+// @version     1.1.2
 // @namespace   RA
 // @match       https://retroachievements.org/game/*
 // @match       https://retroachievements.org/gameSearch*
@@ -139,7 +139,7 @@ const Pages = (() => {
     const getProgressById = table => {
         return [...table.getElementsByTagName('tr')].filter(r => r.querySelector('a')).reduce((res, row) => {
             const Id = parseInt(row.getElementsByTagName('a')[0].href.split('/').at(-1));
-            const progressTitle = row.querySelector('div[role="progressbar"]')?.title;
+            const progressTitle = row.querySelector('div[role="progressbar"]')?.ariaLabel;
             if (!progressTitle) return res;
             const hcProgressMatch = progressTitle.match(/(\d+)\/(\d+) \(hardcore\)/);
             const hcUnlocked = hcProgressMatch ? parseInt(hcProgressMatch[1]) : 0;
