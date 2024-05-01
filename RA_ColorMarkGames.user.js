@@ -198,6 +198,14 @@ const Pages = (() => {
 
     // hub, system page, developer sets
     const Hub = (() => {
+        const isolateFooter = table => {
+            const lastRow = table.querySelector('tbody > tr:last-child');
+            if (lastRow.getElementsByTagName('a').length > 0) return;
+            const tfoot = document.createElement('tfoot');
+            table.append(tfoot);
+            tfoot.append(lastRow);
+        };
+
         const GetNewType = cell => {
             if (!cell) return 'Hub';
             const points = parseInt(cell.innerText.replace(/\d+ of /, '').replaceAll(',', ''));
@@ -216,6 +224,7 @@ const Pages = (() => {
             if (!Settings.ColorHubLines && !Settings.SortHubLines) return;
             const tables = document.querySelectorAll('table.table-highlight');
             tables.forEach(table => {
+                isolateFooter(table);
                 const rowsObjs = GetRowsData(table).sort((a, b) => a.Name.localeCompare(b.Name));
                 const progress = getProgressById(table);
                 const rowsObjsByType = SplitDefault(Processing.GroupByTypes(rowsObjs, progress));
@@ -248,7 +257,7 @@ const Pages = (() => {
         return { Do };
     })();
 
-    // All Games, Want to Play Games, Hardest Games, Hubs (ignored)
+    // All Games, Want to Play Games, Hardest Games, Hub List (ignored)
     const GameList = (() => {
         const YEAR = `${new Date().getFullYear()}`;
 
