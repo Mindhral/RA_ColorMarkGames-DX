@@ -44,7 +44,9 @@ const Settings = {
     SortHubLines: GM_getValue('sortHubLines', true),
     ColorProgressLines: GM_getValue('colorProgressLines', true),
     ColorSetRequestLines: GM_getValue('colorSetRequestLines', true),
-    SortSetRequestLines: GM_getValue('sortSetRequestLines', true)
+    SortSetRequestLines: GM_getValue('sortSetRequestLines', true),
+    ShowGameIgnoreButton: GM_getValue('showGameIgnoreButton', true),
+    ShowHubIgnoreButtons: GM_getValue('showHubIgnoreButtons', false)
 };
 
 // TODO: Ignored from the site interface
@@ -87,7 +89,7 @@ const Data = (() => {
 
     const SaveProgress = () => { localStorage.MarkProgress = JSON.stringify(_progress); };
     const LoadProgress = () => { _progress = LoadObjStorage(localStorage.MarkProgress); };
-    const SaveIgnored = () => { localStorage.MarkIgnored = JSON.stringify([..._ignored]); };
+    const SaveIgnored = () => { GM_setValue('MarkIgnored', [..._ignored]) };
 
     const LoadIgnored = () => {
         const Manual = (ignored, mode) => {
@@ -97,13 +99,18 @@ const Data = (() => {
             return ignored;
         };
 
-        _ignored = Manual(Manual(new Set(LoadArrStorage(localStorage.MarkIgnored)), 'add'), 'delete');
+        _ignored = Manual(Manual(new Set(GM_getValue('MarkIgnored', [])), 'add'), 'delete');
         SaveIgnored();
     };
 
+    const getIgnoredList = (reload) => {
+        if (!_ignored || reload) LoadIgnored();
+        return _ignored;
+    };
     return {
-        IgnoredGet() { if (!_ignored) LoadIgnored(); return _ignored; },
-        IgnoredSet(ignored) { _ignored = ignored; SaveIgnored(); },
+        IgnoredGet(gameId) { return getIgnoredList(false).has(gameId); },
+        IgnoredAdd(gameId) { getIgnoredList(true).add(gameId); SaveIgnored(); },
+        IgnoredRemove(gameId) { getIgnoredList(true).delete(gameId); SaveIgnored(); },
         ProgressGet() { if (!_progress) LoadProgress(); return _progress; },
         ProgressSet(progress) { _progress = progress; SaveProgress(); },
     };
@@ -113,7 +120,7 @@ const Processing = (() => {
     const GetType = (id, progressObj = null) => {
         if (typeof (id) !== 'number') id = parseInt(id);
         if (!progressObj) progressObj = Data.ProgressGet()[id];
-        if (!progressObj || progressObj.Unlocked == 0) return (Data.IgnoredGet().has(id)) ? 'Ignored' : 'Default';
+        if (!progressObj || progressObj.Unlocked == 0) return (Data.IgnoredGet(id)) ? 'Ignored' : 'Default';
         if (progressObj.Unlocked === progressObj.Total) return 'Mastered';
         return progressObj.Unlocked / progressObj.Total >= 0.5 ? 'Halfway' : 'Started';
     };
@@ -220,6 +227,39 @@ const Pages = (() => {
             return { ...p, [newType]: [c, ...(p[newType] || [])] };
         }, rowsObjsByType) || rowsObjsByType;
 
+        const addIgnoreButtons = (table) => {
+            const newHeader = document.createElement('th');
+            const backlogHeader = table.querySelector('thead th[title*="want to play"]');
+            if (!backlogHeader) return; // not a game table
+            const backlogIndex = [...backlogHeader.parentElement.children].indexOf(backlogHeader);
+            backlogHeader.after(newHeader);
+            newHeader.outerHTML = backlogHeader.outerHTML.replace('want to play', 'ignore').replace('Backlog', 'Ignore');
+
+            table.querySelectorAll('tbody tr').forEach(tr => {
+                const newCell = document.createElement('td');
+                const backlogCell = tr.children[backlogIndex];
+                backlogCell.after(newCell);
+                newCell.outerHTML = backlogCell.outerHTML.replace(/ onclick=".+?"/, '').replaceAll('Want to Play', "Ignore").replaceAll(/(play-)?list-/g, 'ignore-list-');
+                const ignoreButton = tr.children[backlogIndex + 1].firstElementChild;
+                const id = parseInt(ignoreButton.id.split('-').at(-1));
+                const addIcon = document.getElementById('add-to-ignore-list-' + id);
+                const removeIcon = document.getElementById('remove-from-ignore-list-' + id);
+                ignoreButton.addEventListener('click', () => {
+                    if (addIcon.classList.contains('hidden')) {
+                        addIcon.classList.remove('hidden');
+                        removeIcon.classList.add('hidden');
+                        ignoreButton.title = 'Add to Ignore list';
+                        Data.IgnoredRemove(id);
+                    } else {
+                        addIcon.classList.add('hidden');
+                        removeIcon.classList.remove('hidden');
+                        ignoreButton.title = 'Remove from Ignore list';
+                        Data.IgnoredAdd(id);
+                    }
+                });
+            });
+        };
+
         const Do = () => {
             if (!Settings.ColorHubLines && !Settings.SortHubLines) return;
             const tables = document.querySelectorAll('table.table-highlight');
@@ -229,6 +269,7 @@ const Pages = (() => {
                 const progress = getProgressById(table);
                 const rowsObjsByType = SplitDefault(Processing.GroupByTypes(rowsObjs, progress));
                 SetNewOrder(table, rowsObjsByType, Settings.ColorHubLines, Settings.SortHubLines);
+                if (Settings.ShowHubIgnoreButtons) addIgnoreButtons(table);
             });
         };
 
@@ -237,6 +278,35 @@ const Pages = (() => {
 
     // game page (and hub, redirected to Hub object)
     const Game = (() => {
+        const addIgnoreButton = () => {
+            const wtpButton = document.getElementById('play-list-button');
+            const newButton = document.createElement('button');
+            const newDiv = document.createElement('div');
+            newDiv.className = 'flex';
+            wtpButton.replaceWith(newDiv);
+            newDiv.append(wtpButton, newButton);
+            newButton.outerHTML = wtpButton.outerHTML.replace(/ onclick=".+?"/, '').replaceAll('Want to Play', "Ignore").replaceAll('play', 'ignore');
+
+            const gameId = parseInt(location.pathname.split('/').at(-1));
+            const ignoreButton = document.getElementById('ignore-list-button');
+            const addIcon = document.getElementById('add-to-ignore-list');
+            const removeIcon = document.getElementById('remove-from-ignore-list');
+            ignoreButton.addEventListener('click', () => {
+                if (addIcon.classList.contains('hidden')) {
+                    addIcon.classList.remove('hidden');
+                    removeIcon.classList.add('hidden');
+                    ignoreButton.title = 'Add to Ignore list';
+                    Data.IgnoredRemove(gameId);
+                } else {
+                    addIcon.classList.add('hidden');
+                    removeIcon.classList.remove('hidden');
+                    ignoreButton.title = 'Remove from Ignore list';
+                    Data.IgnoredAdd(gameId);
+                }
+            });
+            if (Data.IgnoredGet(gameId)) ignoreButton.click();
+        };
+
         const Do = () => {
             if (!document.getElementsByClassName('commentscomponent')[0]) {
                 Hub.Do();
@@ -252,6 +322,8 @@ const Pages = (() => {
                 const rowsObjsByType = Processing.GroupByTypes(rowsObjs);
                 SetNewOrder(table, rowsObjsByType, true, true);
             });
+
+            if (Settings.ShowGameIgnoreButton) addIgnoreButton();
         };
 
         return { Do };
@@ -519,6 +591,13 @@ const Pages = (() => {
                     <label><input id="sortSetRequestsCheckbox" type="checkbox"/> sort</label>
 				</td>
 			</tr>
+			<tr>
+				<td>Ignore buttons <div class="icon" title="Add button to add/remove game from ignore list" style="cursor: help;">💡</div></td>
+				<td style="text-align: right;">
+					<label><input id="gameIgnoreButtonCheckbox" type="checkbox"/> game page</label>
+                    <label><input id="hubIgnoreButtonsCheckbox" type="checkbox"/> hub pages</label>
+				</td>
+			</tr>
 		</tbody>
 	</table>
 </div>`
@@ -633,6 +712,8 @@ const Pages = (() => {
             bindCheckbox('colorProgressCheckbox', 'ColorProgressLines', 'colorProgressLines');
             bindCheckbox('colorSetRequestsCheckbox', 'ColorSetRequestLines', 'colorSetRequestLines');
             bindCheckbox('sortSetRequestsCheckbox', 'SortSetRequestLines', 'sortSetRequestLines');
+            bindCheckbox('gameIgnoreButtonCheckbox', 'ShowGameIgnoreButton', 'showGameIgnoreButton');
+            bindCheckbox('hubIgnoreButtonsCheckbox', 'ShowHubIgnoreButtons', 'showHubIgnoreButtons');
         };
 
         return { Do };

@@ -15,6 +15,7 @@ The script is fixed for RAWeb 6.0.3 (at least), and adds some features:
 - Support for *Requested Sets* page for a user when the link to include games with a set has been used
 - Support for Hardest Games page (coloring only)
 - On pages with progress bars, use data from these instead instead of the one stored from profile page
+- Adds buttons on game page (on by default) and on hub/system/developer set pages (off by default) to add or remove sets from ignore list
 - and a few minor tweaks (script favicon, adds total unlocks in game list foot row...)
 
 ## Examples
@@ -69,7 +70,7 @@ All the following values must be present:
 - SmallSet: games with achievements, not played, and few points (on pages where the points are displayed)
 - Default: games with achievements, not played, not considered small sets
 - Mastered: games with all achievements unlocked
-- Ignored: games in the ignored list (no UI available yet, must be edited through localStorage.Ignored_add and localStorage.Ignored_delete values in the browser console)
+- Ignored: games in the ignored list (a list specific to this script)
 - NoSet: games with no official achievement
 - Hub: self explanatory
 
@@ -81,8 +82,8 @@ The reset icon on the right allows to restore the default order.
 
 - *Small set threshold*: number of points bellow which a game is considered a small set for coloring and sorting. Only effective on pages with the number of points displayed (hubs, console games list, developer sets). Set to 0 to have all sets in the same category (or use "Played" in the sort order)
 
-- *Show progress for 100% unlocks*: on tables with a number of achievements but no progress bar (*All Games* and *Want to Play* as of today), the number of achievements is replaced by a progression of type unlocked/total. This parameter disables this behavior for games with all achievements unlocked.
-  Here it is disabled:
+- *Show progress for 100% unlocks*: on tables with a number of achievements but no progress bar (*All Games* and *Want to Play* as of today), the number of achievements is replaced by a progression of type unlocked/total. This parameter disables this behavior for games with all achievements unlocked.<br/>
+  Here it is disabled:<br/>
   ![No progress for 100% unlock](/assets/Settings_100_noprogress.png)
   
 - *Use hardcore progress*: allows to use hardcore progress only to determine which games are started, half done and mastered. This is only meaningful for "mixed" players (using both modes).
@@ -92,3 +93,8 @@ The reset icon on the right allows to restore the default order.
 - *Completion progress*: allows to disable the coloring on other users completion progress pages.
 
 - *User set requests*: allows to disable the coloring and the sorting on the *Requested Sets* list of a user.
+
+- *Ignore buttons*: determines if an *Ignore* button is added to the *Game* page (first checkbox) and to each row of hubs, system and developer pages.<br/>
+  ![Ignore button on game page](/assets/Ignore_button_game.png) ![Ignore button on hub pages](/assets/Ignore_button_hubs.png)<br/>
+  This button adds or remove sets to the ignored list for this script, so that they are sorted separately and colored differently.<br/>
+  The old way of editing this list, through the Ignored_add and Ignored_delete local storage properties in the browser console still works.
