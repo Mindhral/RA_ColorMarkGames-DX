@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        RA_ColorMarkGames
 // @description Colors Game Names
-// @version     1.1.2
+// @version     1.2
 // @namespace   RA
 // @match       https://retroachievements.org/game/*
 // @match       https://retroachievements.org/gameSearch*
@@ -152,7 +152,7 @@ const Pages = (() => {
     };
     const GetRowsData = (table) => [...table.querySelectorAll('tr:not(.do-not-highlight)')].reduce((objs, Row) => {
         const cells = Row.getElementsByTagName('td');
-        const a = cells[0]?.getElementsByTagName('a')[0];
+        const a = Row.getElementsByTagName('a')[0];
         if (!a) return objs;
         const Id = parseInt(a.href.split('/').at(-1));
         const replaces = { "''": "'", '&amp;': '&', '  ': ' ' };
@@ -178,6 +178,7 @@ const Pages = (() => {
         return userName === urlName;
     };
 
+    // user profile
     const User = (() => {
         const Do = () => {
             const urlName = window.location.pathname.split('/', 3)[2];
@@ -195,6 +196,7 @@ const Pages = (() => {
         return { Do };
     })();
 
+    // hub, system page, developer sets
     const Hub = (() => {
         const GetNewType = cell => {
             if (!cell) return 'Hub';
@@ -224,6 +226,7 @@ const Pages = (() => {
         return { Do };
     })();
 
+    // game page (and hub, redirected to Hub object)
     const Game = (() => {
         const Do = () => {
             if (!document.getElementsByClassName('commentscomponent')[0]) {
@@ -245,6 +248,7 @@ const Pages = (() => {
         return { Do };
     })();
 
+    // All Games, Want to Play Games, Hardest Games, Hubs (ignored)
     const GameList = (() => {
         const YEAR = `${new Date().getFullYear()}`;
 
@@ -324,8 +328,10 @@ const Pages = (() => {
                 const rowObj = rowObjs[i];
                 const type = Processing.GetType(rowObj.Id);
                 SetRowColor(rowObj.Row, type);
-                AddProgress(rowObj, hPos.Achs);
-                FixCells(rowObj.Row.getElementsByTagName('td'), hPos, centerSet);
+                if (hPos.Achs) {
+                    AddProgress(rowObj, hPos.Achs);
+                    FixCells(rowObj.Row.getElementsByTagName('td'), hPos, centerSet);
+                }
             }
         };
 
@@ -334,7 +340,6 @@ const Pages = (() => {
             const rows = table.getElementsByTagName('tr');
             if (rows.length < 2) return null;
             const hPos = GetHeaderPositions(rows[0]);
-            if (!hPos.Achs) return "I can't see the Achievements column";
 
             // todo: refactor
             FixHeader(rows[0], pageType, hPos);
@@ -348,14 +353,14 @@ const Pages = (() => {
             return null;
         };
 
-        const Hardest = () => DoList(document.getElementById('fullcontainer').getElementsByTagName('table')[0], 'h');
+        const Hardest = () => DoList(document.querySelector('.detaillist table'), 'h');
 
         const GetPageType = () => {
             const cVal = GetUrlParam('c');
             if (cVal) return (cVal === '0') ? PageTypes.all : (cVal === '100') ? PageTypes.hubs : PageTypes.consoles;
             const tVal = GetUrlParam('t');
             if (tVal && tVal === 'play') return PageTypes.toplay;
-            return PageTypes.unknown; // todo
+            return PageTypes.all; // default
         };
 
         const Do = () => {
@@ -371,6 +376,7 @@ const Pages = (() => {
         return { Hardest, Do };
     })();
 
+    // Most Requested
     const SetRequests = (() => {
 
         const splitDefault = (rowsObjsByType) => rowsObjsByType.Default?.reduceRight((p, c, i) => {
@@ -404,6 +410,7 @@ const Pages = (() => {
         return { Do };
     })();
 
+    // links in Forum posts
     const Forum = (() => {
         const GetLinks = () => [...document
                                 .getElementsByTagName("article")[0]
@@ -426,6 +433,7 @@ const Pages = (() => {
         return { Do };
     })();
 
+    // Completion Progress page
     const Progress = (() => {
         const Do = () => {
             if (!Settings.ColorProgressLines || !document.querySelector('nav .dropdown-menu-right')) return; // not authenticated
@@ -630,8 +638,8 @@ const Pages = (() => {
         setRequestList: SetRequests.Do,
         progress: Progress.Do,
         viewtopic: Forum.Do,
-        controlpanel: SettingsPage.Do
-        // todo: gameSearch: GameList.Hardest,
+        controlpanel: SettingsPage.Do,
+        gameSearch: GameList.Hardest
     };
 })();
 

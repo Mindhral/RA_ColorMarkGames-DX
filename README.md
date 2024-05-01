@@ -13,6 +13,7 @@ The script is fixed for RAWeb 6.0.3 (at least), and adds some features:
 - Settings to disable coloring or sorting on pages with progress bars
 - Support for other users progress page (and setting to disable it)
 - Support for *Requested Sets* page for a user when the link to include games with a set has been used
+- Support for Hardest Games page (coloring only)
 - On pages with progress bars, use data from these instead instead of the one stored from profile page
 - and a few minor tweaks (script favicon, adds total unlocks in game list foot row...)
 
