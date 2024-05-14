@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        RA_ColorMarkGames
 // @description Colors Game Names
-// @version     1.2
+// @version     1.2.1
 // @namespace   RA
 // @match       https://retroachievements.org/game/*
 // @match       https://retroachievements.org/gameSearch*
@@ -241,22 +241,23 @@ const Pages = (() => {
                 backlogCell.after(newCell);
                 newCell.outerHTML = backlogCell.outerHTML.replace(/ onclick=".+?"/, '').replaceAll('Want to Play', "Ignore").replaceAll(/(play-)?list-/g, 'ignore-list-');
                 const ignoreButton = tr.children[backlogIndex + 1].firstElementChild;
-                const id = parseInt(ignoreButton.id.split('-').at(-1));
-                const addIcon = document.getElementById('add-to-ignore-list-' + id);
-                const removeIcon = document.getElementById('remove-from-ignore-list-' + id);
+                const gameId = parseInt(ignoreButton.id.split('-').at(-1));
+                const addIcon = document.getElementById('add-to-ignore-list-' + gameId);
+                const removeIcon = document.getElementById('remove-from-ignore-list-' + gameId);
                 ignoreButton.addEventListener('click', () => {
                     if (addIcon.classList.contains('hidden')) {
                         addIcon.classList.remove('hidden');
                         removeIcon.classList.add('hidden');
                         ignoreButton.title = 'Add to Ignore list';
-                        Data.IgnoredRemove(id);
+                        Data.IgnoredRemove(gameId);
                     } else {
                         addIcon.classList.add('hidden');
                         removeIcon.classList.remove('hidden');
                         ignoreButton.title = 'Remove from Ignore list';
-                        Data.IgnoredAdd(id);
+                        Data.IgnoredAdd(gameId);
                     }
                 });
+                if (Data.IgnoredGet(gameId) != addIcon.classList.contains('hidden')) ignoreButton.click();
             });
         };
 
@@ -304,7 +305,7 @@ const Pages = (() => {
                     Data.IgnoredAdd(gameId);
                 }
             });
-            if (Data.IgnoredGet(gameId)) ignoreButton.click();
+            if (Data.IgnoredGet(gameId) != addIcon.classList.contains('hidden')) ignoreButton.click();
         };
 
         const Do = () => {
