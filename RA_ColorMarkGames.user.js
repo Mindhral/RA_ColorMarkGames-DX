@@ -281,6 +281,7 @@ const Pages = (() => {
     const Game = (() => {
         const addIgnoreButton = () => {
             const wtpButton = document.getElementById('play-list-button');
+            if (!wtpButton) return; // not logged in
             const newButton = document.createElement('button');
             const newDiv = document.createElement('div');
             newDiv.className = 'flex';
