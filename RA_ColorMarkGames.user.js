@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name        RA_ColorMarkGames
 // @description Colors Game Names
-// @version     1.2.1
+// @version     1.3
 // @namespace   RA
 // @match       https://retroachievements.org/game/*
 // @match       https://retroachievements.org/gameSearch*
 // @match       https://retroachievements.org/gameList.php*
+// @match       https://retroachievements.org/games/suggest*
 // @match       https://retroachievements.org/user/*
 // @match       https://retroachievements.org/viewtopic.php?t=*
 // @match       https://retroachievements.org/setRequestList.php?u=*
@@ -725,6 +726,7 @@ const Pages = (() => {
     return {
         user: User.Do,
         game: Game.Do,
+        games: Hub.Do,
         system: Hub.Do,
         developer: Hub.Do,
         gameList: GameList.Do,

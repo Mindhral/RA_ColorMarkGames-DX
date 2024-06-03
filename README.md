@@ -14,6 +14,7 @@ The script is fixed for RAWeb 6.0.3 (at least), and adds some features:
 - Support for other users progress page (and setting to disable it)
 - Support for *Requested Sets* page for a user when the link to include games with a set has been used
 - Support for Hardest Games page (coloring only)
+- Support for Game Suggestions pages
 - On pages with progress bars, use data from these instead instead of the one stored from profile page
 - Adds buttons on game page (on by default) and on hub/system/developer set pages (off by default) to add or remove sets from ignore list
 - and a few minor tweaks (script favicon, adds total unlocks in game list foot row...)
@@ -88,13 +89,13 @@ The reset icon on the right allows to restore the default order.
   
 - *Use hardcore progress*: allows to use hardcore progress only to determine which games are started, half done and mastered. This is only meaningful for "mixed" players (using both modes).
 
-- *Game lists with progress bars*: allows to disable coloring on Hubs, console games lists and developer sets lists as the new display for these pages can be considered clear enough. The sorting can also be disabled as it messes with the one provided by these pages, unless using [RA_EnhancedHubSort](https://github.com/Mindhral/RA_userscripts/tree/main#ra_enhancedhubsort) at the same time
+- *Game lists with progress bars*: allows to disable coloring on Hubs, console games lists, developer sets lists and Game Suggestions pages as the new display for these pages can be considered clear enough. The sorting can also be disabled as it messes with the one provided by these pages, unless using [RA_EnhancedHubSort](https://github.com/Mindhral/RA_userscripts/tree/main#ra_enhancedhubsort) at the same time
 
 - *Completion progress*: allows to disable the coloring on other users completion progress pages.
 
 - *User set requests*: allows to disable the coloring and the sorting on the *Requested Sets* list of a user.
 
-- *Ignore buttons*: determines if an *Ignore* button is added to the *Game* page (first checkbox) and to each row of hubs, system and developer pages.<br/>
+- *Ignore buttons*: determines if an *Ignore* button is added to the *Game* page (first checkbox) and to each row of hubs, system, developer and suggestions pages.<br/>
   ![Ignore button on game page](/assets/Ignore_button_game.png) ![Ignore button on hub pages](/assets/Ignore_button_hubs.png)<br/>
   This button adds or remove sets to the ignored list for this script, so that they are sorted separately and colored differently.<br/>
   The old way of editing this list, through the Ignored_add and Ignored_delete local storage properties in the browser console still works.
