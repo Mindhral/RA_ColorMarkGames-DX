@@ -13,6 +13,8 @@
 // @match       https://retroachievements.org/controlpanel.php*
 // @match       https://retroachievements.org/system/*/games*
 // @exclude     https://retroachievements.org/user/*/game/*
+// @exclude     https://retroachievements.org/game/*/tickets*
+// @exclude     https://retroachievements.org/game/*/hashes*
 // @run-at      document-start
 // @icon        https://static.retroachievements.org/assets/images/favicon.webp
 // @grant       GM_setValue
