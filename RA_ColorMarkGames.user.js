@@ -243,9 +243,17 @@ const Pages = (() => {
                 const newCell = document.createElement('td');
                 const backlogCell = tr.children[backlogIndex];
                 backlogCell.after(newCell);
-                newCell.outerHTML = backlogCell.outerHTML.replace(/ onclick=".+?"/, '').replaceAll('Want to Play', "Ignore").replaceAll(/(play-)?list-/g, 'ignore-list-');
+                newCell.className = backlogCell.className;
+                const gameId = parseInt(tr.getElementsByTagName('a')[0].href.split('/').at(-1));
+                newCell.innerHTML = `<button class="btn" title="Add to Ignore list">
+  <div id="add-to-ignore-list-${gameId}" class="flex items-center gap-x-1">
+    <svg class="icon w-[12px] h-[12px]" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. --><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"></path></svg>
+  </div>
+  <div id="remove-from-ignore-list-${gameId}" class="flex items-center gap-x-1 hidden">
+    <svg class="icon w-[12px] h-[12px]" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. --><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg>
+  </div>
+</button>`;
                 const ignoreButton = tr.children[backlogIndex + 1].firstElementChild;
-                const gameId = parseInt(ignoreButton.id.split('-').at(-1));
                 const addIcon = document.getElementById('add-to-ignore-list-' + gameId);
                 const removeIcon = document.getElementById('remove-from-ignore-list-' + gameId);
                 ignoreButton.addEventListener('click', () => {
@@ -284,19 +292,28 @@ const Pages = (() => {
     // game page (and hub, redirected to Hub object)
     const Game = (() => {
         const addIgnoreButton = () => {
-            const wtpButton = document.getElementById('play-list-button');
+            const wtpButton = document.querySelector('h1 button');
             if (!wtpButton) return; // not logged in
-            const newButton = document.createElement('button');
             const newDiv = document.createElement('div');
-            newDiv.className = 'flex';
+            newDiv.className = 'flex gap-x-1';
             wtpButton.replaceWith(newDiv);
-            newDiv.append(wtpButton, newButton);
-            newButton.outerHTML = wtpButton.outerHTML.replace(/ onclick=".+?"/, '').replaceAll('Want to Play', "Ignore").replaceAll('play', 'ignore');
+            newDiv.innerHTML = `<button class="btn" title="Add to Ignore list">
+  <div class="flex items-center gap-x-1">
+    <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon w-[12px] h-[12px]"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. --><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"></path></svg>
+    <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon w-[12px] h-[12px] hidden"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. --><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg>
+    Ignore
+  </div>
+</button>`;
+            // workaround to prevent a javascript error when adding back the element in the DOM
+            const wireId = wtpButton.getAttribute('wire:id');
+            wtpButton.removeAttribute('wire:id');
+            newDiv.prepend(wtpButton);
+            wtpButton.setAttribute('wire:id', wireId); // so that the button still works
 
             const gameId = parseInt(location.pathname.split('/').at(-1));
-            const ignoreButton = document.getElementById('ignore-list-button');
-            const addIcon = document.getElementById('add-to-ignore-list');
-            const removeIcon = document.getElementById('remove-from-ignore-list');
+            const ignoreButton = newDiv.lastElementChild;
+            const addIcon = ignoreButton.getElementsByTagName('svg').item(0);
+            const removeIcon = ignoreButton.getElementsByTagName('svg').item(1);
             ignoreButton.addEventListener('click', () => {
                 if (addIcon.classList.contains('hidden')) {
                     addIcon.classList.remove('hidden');
