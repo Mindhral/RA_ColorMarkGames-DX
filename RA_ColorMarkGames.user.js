@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        RA_ColorMarkGames
 // @description Colors Game Names
-// @version     1.3
+// @version     1.3.1
 // @namespace   RA
 // @match       https://retroachievements.org/game/*
 // @match       https://retroachievements.org/gameSearch*
@@ -13,8 +13,10 @@
 // @match       https://retroachievements.org/controlpanel.php*
 // @match       https://retroachievements.org/system/*/games*
 // @exclude     https://retroachievements.org/user/*/game/*
+// @exclude     https://retroachievements.org/game/*/comments*
 // @exclude     https://retroachievements.org/game/*/tickets*
 // @exclude     https://retroachievements.org/game/*/hashes*
+// @exclude     https://retroachievements.org/game/*/masters*
 // @run-at      document-start
 // @icon        https://static.retroachievements.org/assets/images/favicon.webp
 // @grant       GM_setValue
