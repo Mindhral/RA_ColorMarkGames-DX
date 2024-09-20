@@ -10,7 +10,7 @@
 // @match       https://retroachievements.org/user/*
 // @match       https://retroachievements.org/viewtopic.php?t=*
 // @match       https://retroachievements.org/setRequestList.php?u=*
-// @match       https://retroachievements.org/controlpanel.php*
+// @match       https://retroachievements.org/settings*
 // @match       https://retroachievements.org/system/*/games*
 // @exclude     https://retroachievements.org/user/*/game/*
 // @exclude     https://retroachievements.org/game/*/comments*
@@ -555,83 +555,83 @@ const Pages = (() => {
     })();
 
     const SettingsPage = (() => {
-        const settingsDivHtml = `<div class="component">
-	<h4>Color Mark Games</h4>
-	<table class="table-highlight">
-		<tbody>
-			<tr>
-				<td>Text colors</td>
-				<td style="text-align: right;">
-					<select id="colorSelect"></select>
-					<input id="colorPicker" type="color" style="vertical-align: middle;">
-					<label><input id="defaultColorCheckbox" type="checkbox"> site default</label>
-					<div id="resetColorIcon" class="icon" title="reset element to script default" style="cursor: pointer; font-size: 1.5em; vertical-align: sub;">↩️</div>
-				</td>
-			</tr>
-			<tr>
-				<td>Sort order</td>
-				<td style="text-align: right;">
-					<div class="icon" title="Set to empty value to ignore sorting" style="cursor: help;">💡</div>
-					<input id="sortOrderInput" type="text" size="55">
-					<div id="resetOrderIcon" class="icon" title="reset to default" style="cursor: pointer; font-size: 1.5em; vertical-align: sub;">↩️</div>
-				</td>
-			</tr>
-			<tr>
-				<td>Small set threshold</td>
-				<td style="text-align: right;">
-					<div class="icon" title="Set to 0 to keep with Default group" style="cursor: help;">💡</div>
-					<input id="smallSetThrInput" type="number" min="0" style="width: 7em;"/>
-				</td>
-			</tr>
-			<tr>
-				<td>Show progress for 100% unlocks</td>
-				<td style="text-align: right;">
-					<input id="show100ProgressCheckbox" type="checkbox"/>
-				</td>
-			</tr>
-			<tr>
-				<td>Use hardcore progression</td>
-				<td style="text-align: right;">
-					<div class="icon" title="Reload Profile page for the change to take effect" style="cursor: help;">💡</div>
-					<input id="useHardcoreCheckbox" type="checkbox"/>
-				</td>
-			</tr>
-			<tr>
-				<td>Game lists with progress bars <div class="icon" title="Hubs, console game lists and dev sets lists" style="cursor: help;">💡</div></td>
-				<td style="text-align: right;">
-					<label><input id="colorHubsCheckbox" type="checkbox"/> color</label>
-                    <label><input id="sortHubsCheckbox" type="checkbox"/> sort</label>
-				</td>
-			</tr>
-			<tr>
-				<td>Completion progress <div class="icon" title="Other users completion progress pages" style="cursor: help;">💡</div></td>
-				<td style="text-align: right;">
-					<label><input id="colorProgressCheckbox" type="checkbox"/> color</label>
-				</td>
-			</tr>
-			<tr>
-				<td>User set requests</td>
-				<td style="text-align: right;">
-					<label><input id="colorSetRequestsCheckbox" type="checkbox"/> color</label>
-                    <label><input id="sortSetRequestsCheckbox" type="checkbox"/> sort</label>
-				</td>
-			</tr>
-			<tr>
-				<td>Ignore buttons <div class="icon" title="Add button to add/remove game from ignore list" style="cursor: help;">💡</div></td>
-				<td style="text-align: right;">
-					<label><input id="gameIgnoreButtonCheckbox" type="checkbox"/> game page</label>
-                    <label><input id="hubIgnoreButtonsCheckbox" type="checkbox"/> hub pages</label>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+        const settingsDivHtml = `<div class="text-card-foreground rounded-lg border border-embed-highlight bg-embed shadow-sm w-full">
+  <div class="flex flex-col space-y-1.5 p-6 pb-4">
+    <h4 class="mb-0 border-b-0 text-2xl font-semibold leading-none tracking-tight">Color Mark Games</h4>
+  </div>
+  <form><div class="p-6 pt-0"><table><tbody class="[&>tr>td]:!px-0 [&>tr>td]:py-2 [&>tr>th]:!px-0 [&>tr]:!bg-embed">
+    <tr>
+      <th scope="row">Text colors</th>
+      <td style="text-align: right;">
+        <select id="colorSelect"></select>
+        <input id="colorPicker" type="color" style="vertical-align: middle;">
+        <label><input id="defaultColorCheckbox" type="checkbox"> site default</label>
+        <div id="resetColorIcon" class="icon" title="reset element to script default" style="cursor: pointer; font-size: 1.5em; vertical-align: sub;">↩️</div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Sort order</th>
+      <td style="text-align: right;">
+        <div class="icon" title="Set to empty value to ignore sorting" style="cursor: help;">💡</div>
+        <input id="sortOrderInput" type="text" size="55">
+        <div id="resetOrderIcon" class="icon" title="reset to default" style="cursor: pointer; font-size: 1.5em; vertical-align: sub;">↩️</div>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Small set threshold</th>
+      <td style="text-align: right;">
+        <div class="icon" title="Set to 0 to keep with Default group" style="cursor: help;">💡</div>
+        <input id="smallSetThrInput" type="number" min="0" style="width: 7em;"/>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Show progress for 100% unlocks</th>
+      <td style="text-align: right;">
+        <input id="show100ProgressCheckbox" type="checkbox"/>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Use hardcore progression</th>
+      <td style="text-align: right;">
+        <div class="icon" title="Reload Profile page for the change to take effect" style="cursor: help;">💡</div>
+        <input id="useHardcoreCheckbox" type="checkbox"/>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Game lists with progress bars <div class="icon" title="Hubs, console game lists and dev sets lists" style="cursor: help;">💡</div></th>
+      <td style="text-align: right;">
+        <label><input id="colorHubsCheckbox" type="checkbox"/> color</label>
+                  <label><input id="sortHubsCheckbox" type="checkbox"/> sort</label>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Completion progress <div class="icon" title="Other users completion progress pages" style="cursor: help;">💡</div></th>
+      <td style="text-align: right;">
+        <label><input id="colorProgressCheckbox" type="checkbox"/> color</label>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">User set requests</th>
+      <td style="text-align: right;">
+        <label><input id="colorSetRequestsCheckbox" type="checkbox"/> color</label>
+                  <label><input id="sortSetRequestsCheckbox" type="checkbox"/> sort</label>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Ignore buttons <div class="icon" title="Add button to add/remove game from ignore list" style="cursor: help;">💡</div></th>
+      <td style="text-align: right;">
+        <label><input id="gameIgnoreButtonCheckbox" type="checkbox"/> game page</label>
+                  <label><input id="hubIgnoreButtonsCheckbox" type="checkbox"/> hub pages</label>
+      </td>
+    </tr>
+  </tbody></table></div></form>
 </div>`
         // default color for links
         const defaultColor = 'var(--link-color)';
 
         const Do = () => {
-            const xpathRes = document.evaluate("//div[h3[text()='Settings']]", document, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
-            const settingsDiv = xpathRes.iterateNext();
+            const xpathRes = document.evaluate("//div[h3[text()='Preferences']]", document, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+            const settingsDiv = xpathRes.iterateNext().parentElement;
             if (settingsDiv == null) return;
 
             const newDiv = document.createElement('div');
@@ -754,7 +754,7 @@ const Pages = (() => {
         setRequestList: SetRequests.Do,
         progress: Progress.Do,
         viewtopic: Forum.Do,
-        controlpanel: SettingsPage.Do,
+        settings: SettingsPage.Do,
         gameSearch: GameList.Hardest
     };
 })();
