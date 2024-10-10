@@ -33,10 +33,6 @@ Developer's sets list:
 
 ![Example - dev sets](/assets/Example_dev_sets.png)
 
-*Want to Play* list:
-
-![Example - want to play](/assets/Example_wanttoplay.png)
-
 Other user's *Completion Progress* page:
 
 ![Example - completion progress](/assets/Example_progress.png)
@@ -83,7 +79,7 @@ The reset icon on the right allows to restore the default order.
 
 - *Small set threshold*: number of points bellow which a game is considered a small set for coloring and sorting. Only effective on pages with the number of points displayed (hubs, console games list, developer sets). Set to 0 to have all sets in the same category (or use "Played" in the sort order)
 
-- *Show progress for 100% unlocks*: on tables with a number of achievements but no progress bar (*All Games* and *Want to Play* as of today), the number of achievements is replaced by a progression of type unlocked/total. This parameter disables this behavior for games with all achievements unlocked.<br/>
+- *Show progress for 100% unlocks*: on tables with a number of achievements but no progress bar (only *All Games* today), the number of achievements is replaced by a progression of type unlocked/total. This parameter disables this behavior for games with all achievements unlocked.<br/>
   Here it is disabled:<br/>
   ![No progress for 100% unlock](/assets/Settings_100_noprogress.png)
   
