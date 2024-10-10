@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        RA_ColorMarkGames
 // @description Colors Game Names
-// @version     1.3.2
+// @version     1.3.3
 // @namespace   RA
 // @match       https://retroachievements.org/game/*
 // @match       https://retroachievements.org/gameSearch*
@@ -12,11 +12,8 @@
 // @match       https://retroachievements.org/setRequestList.php?u=*
 // @match       https://retroachievements.org/settings*
 // @match       https://retroachievements.org/system/*/games*
-// @exclude     https://retroachievements.org/user/*/game/*
-// @exclude     https://retroachievements.org/game/*/comments*
-// @exclude     https://retroachievements.org/game/*/tickets*
-// @exclude     https://retroachievements.org/game/*/hashes*
-// @exclude     https://retroachievements.org/game/*/masters*
+// @exclude     /https:\/\/retroachievements.org\/user\/.*\/(game\/|tickets|posts|developer\/feed).*/
+// @exclude     /https:\/\/retroachievements.org\/game\/.*\/(comments|tickets|hashes|masters).*/
 // @run-at      document-start
 // @icon        https://static.retroachievements.org/assets/images/favicon.webp
 // @grant       GM_setValue
@@ -209,7 +206,7 @@ const Pages = (() => {
         return { Do };
     })();
 
-    // hub, system page, developer sets
+    // hub, system page, developer sets, game suggestions
     const Hub = (() => {
         const isolateFooter = table => {
             const lastRow = table.querySelector('tbody > tr:last-child');
