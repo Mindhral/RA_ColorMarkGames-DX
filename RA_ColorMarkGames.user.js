@@ -122,8 +122,9 @@ const Data = (() => {
 const Processing = (() => {
     const GetType = (id, progressObj = null) => {
         if (typeof (id) !== 'number') id = parseInt(id);
+        if (Data.IgnoredGet(id)) return 'Ignored';
         if (!progressObj) progressObj = Data.ProgressGet()[id];
-        if (!progressObj || progressObj.Unlocked == 0) return (Data.IgnoredGet(id)) ? 'Ignored' : 'Default';
+        if (!progressObj || progressObj.Unlocked == 0) return 'Default';
         if (progressObj.Unlocked === progressObj.Total) return 'Mastered';
         return progressObj.Unlocked / progressObj.Total >= 0.5 ? 'Halfway' : 'Started';
     };
@@ -540,12 +541,14 @@ const Pages = (() => {
     const Progress = (() => {
         const Do = () => {
             if (!Settings.ColorProgressLines || !document.querySelector('nav .dropdown-menu-right')) return; // not authenticated
-            if (isOwnUserPage()) return;
+            const isOwnPage = isOwnUserPage();
             // for each game, first link is the image, second is the game name
             const gameLinks = [...document.querySelectorAll('article ol li')].map(li => li.getElementsByTagName('a')[1]);
             gameLinks.forEach(link => {
                 const id = parseInt(link.href.split('/').at(-1));
-                if (!Number.isNaN(id)) SetColoreByType(link, Processing.GetType(id));
+                const type = Processing.GetType(id);
+                if (isOwnPage && type != 'Ignored') return;
+                if (!Number.isNaN(id)) SetColoreByType(link, type);
             });
         };
         return { Do };
@@ -602,7 +605,7 @@ const Pages = (() => {
       </td>
     </tr>
     <tr>
-      <th scope="row">Completion progress <div class="icon" title="Other users completion progress pages" style="cursor: help;">💡</div></th>
+      <th scope="row">Completion progress <div class="icon" title="Other users completion progress pages (and ignored list on own page)" style="cursor: help;">💡</div></th>
       <td style="text-align: right;">
         <label><input id="colorProgressCheckbox" type="checkbox"/> color</label>
       </td>
