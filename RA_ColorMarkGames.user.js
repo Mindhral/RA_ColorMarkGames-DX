@@ -13,7 +13,7 @@
 // @match       https://retroachievements.org/settings*
 // @match       https://retroachievements.org/system/*/games*
 // @exclude     /https:\/\/retroachievements.org\/user\/.*\/(game\/|tickets|posts|developer\/feed).*/
-// @exclude     /https:\/\/retroachievements.org\/game\/.*\/(comments|tickets|hashes|masters).*/
+// @exclude     /https:\/\/retroachievements.org\/game\/.*\/(comments|tickets|hashes|top-achievers).*/
 // @run-at      document-start
 // @icon        https://static.retroachievements.org/assets/images/favicon.webp
 // @grant       GM_setValue
