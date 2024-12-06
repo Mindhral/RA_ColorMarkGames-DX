@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        RA_ColorMarkGames
 // @description Colors Game Names
-// @version     1.3.3
+// @version     1.3.4
 // @namespace   RA
 // @match       https://retroachievements.org/game/*
 // @match       https://retroachievements.org/gameSearch*
@@ -627,8 +627,10 @@ const Pages = (() => {
         const defaultColor = 'var(--link-color)';
 
         const Do = () => {
-            if (document.readyState != 'complete') {
-                window.addEventListener("load", Do);
+            // check that react already updated the content
+            const localeSelect = document.querySelector('button#locale-select + select');
+            if (localeSelect.children.length == 0) {
+                setTimeout(Do, 100);
                 return;
             }
             const xpathRes = document.evaluate("//div[h3[text()='Preferences']]", document, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
