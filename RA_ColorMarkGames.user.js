@@ -218,7 +218,7 @@ const Pages = (() => {
 
         const GetNewType = cell => {
             if (!cell) return 'Hub';
-            const points = parseInt(cell.innerText.replace(/\d+ of /, '').replaceAll(',', ''));
+            const points = parseInt(cell.innerText.replace(/\d+ [^0-9 ]+ /, '').replaceAll(',', ''));
             if (points > Settings.SmallSetThr) return null;
             return points > 0 ? 'SmallSet' : 'NoSet';
         };
@@ -483,8 +483,8 @@ const Pages = (() => {
     const SetRequests = (() => {
 
         const splitDefault = (rowsObjsByType) => rowsObjsByType.Default?.reduceRight((p, c, i) => {
-            const text = c.Row.getElementsByTagName('td')[1].innerText;
-            if (c.Row.getElementsByTagName('td')[1].innerText.trim() === 'Set Exists') return p;
+            const claimCell = c.Row.getElementsByTagName('td')[1];
+            if (claimCell.innerText.trim() != '' && !claimCell.querySelector('a')) return p;
             p.Default.splice(i, 1);
             return { ...p, NoSet: [c, ...(p.NoSet || [])] };
         }, rowsObjsByType) || rowsObjsByType;
@@ -633,12 +633,11 @@ const Pages = (() => {
                 setTimeout(Do, 100);
                 return;
             }
-            const xpathRes = document.evaluate("//div[h3[text()='Preferences']]", document, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
-            const settingsDiv = xpathRes.iterateNext().parentElement;
-            if (settingsDiv == null) return;
+            const settingsContainer = document.querySelector('article h1 + div');
+            if (settingsContainer == null) return;
 
             const newDiv = document.createElement('div');
-            settingsDiv.insertAdjacentElement('afterend', newDiv);
+            settingsContainer.append(newDiv);
             newDiv.outerHTML = settingsDivHtml;
 
             // color selection
